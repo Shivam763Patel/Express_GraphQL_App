@@ -3,13 +3,13 @@ const dotenv = require("dotenv")
 const mongoose = require("mongoose");
 const {graphqlHTTP} =require("express-graphql")
 const {createJwtToken} = require("./utils/auth")
-const { authenticate} = require("./middleware/auth")
 const app = express()
 const schema = require("./graphql/schema")
 
 
 // const port = process.env.PORT||3000;
 // console.log(port)
+
 
 dotenv.config()
 
@@ -55,6 +55,8 @@ app.get("/", (req,res)=> {
 //     }
     
 // })
+const { authenticate } = require("./middleware/auth")
+app.use(authenticate)
 
 app.use("/graphql", graphqlHTTP({
     

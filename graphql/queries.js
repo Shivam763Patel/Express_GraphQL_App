@@ -1,10 +1,11 @@
 const {GraphQLList, GraphQLID } = require("graphql")
 const {UserType} = require("./types")
-const { User } = require("../models/User")
+const User = require("../models/User")
 
 const users = {
 
     type: new GraphQLList(UserType),
+    description: "Retrive all records of user",
     resolve(parent,args)
     {
         return User.find()
@@ -19,8 +20,10 @@ const user =
 
     resolve(parent,args)
     {
-        return User.find(args.id)
+        return User.findById(args.id)
     }
+ 
+ 
 
 }
 

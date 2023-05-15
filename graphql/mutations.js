@@ -1,7 +1,8 @@
-const { } = require("./types")
+const  {PostType, CommentType }  = require("./types")
 const User  = require("../models/User")
+const Post  = require("../models/Post")
 
-const { GraphQLString} = require("graphql")
+const { GraphQLString, GraphQLList} = require("graphql")
 
 const { createJwtToken} = require("../utils/auth")
 
@@ -49,6 +50,7 @@ const login =
     async resolve(parent,args)
     {
         const user = await User.findOne({ email: args.email }).select("+password")
+        console.log("User data",user)
         if(!user || args.password !== user.password)
         {
             throw new Error("Invalid credentials")
@@ -62,4 +64,36 @@ const login =
 
 }
 
-module.exports = { register , login}
+const addPost = {
+
+    type: PostType,
+    description: "Create a new POST",
+    args: {
+        title: { type: GraphQLString },
+        description: { type: GraphQLString }
+    },
+
+    resolve(parent, args ,{ verifiedUser })
+    {
+        
+        console.log("User data",verifiedUser)
+        if(!verifiedUser)
+        {
+            throw new Error("Unauthorized")
+
+        }
+
+        const post = new Post({
+            authorId: verifiedUser._id,
+            title: args.title,
+            description: args.description
+        })
+
+        return post.save()
+
+    },
+    
+
+}
+
+module.exports = { register , login , addPost}
